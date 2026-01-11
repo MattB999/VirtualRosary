@@ -1,1 +1,1 @@
-As a Catholic who doesn't always have access to a rosary, it is hard to stay spiritually connected sometimes. With this app that I created anyone can use it at anytime. [You can use it too by clicking this](https://MattB999.github.io/VirtualRosary/)
+As a Catholic who doesn't always have access to a rosary, it is hard to stay spiritually connected sometimes. With this app that I created anyone can use it at anytime. [You can use it too by clicking this](file:///Users/mattbrown/Desktop/YanYan/index.html)
