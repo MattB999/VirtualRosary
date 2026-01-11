@@ -1,0 +1,1 @@
+As a Catholic who doesn't always have access to a rosary, it is hard to stay spiritually connected sometimes. With this app that I created anyone can use it at anytime. [You to can use it](https://MattB999.github.io/Rosary/)
