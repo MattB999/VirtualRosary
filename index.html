@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Rosary</title>
+<style>
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    padding-top: 30px;
+    margin: 0;
+}
+
+.rosary {
+    position: relative;
+    width: 400px;
+    height: 700px;
+    margin-bottom: 20px;
+}
+
+.rosary button {
+    position: absolute;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.rosary button:hover {
+    transform: scale(1.3);
+}
+
+.regularBead {
+    width: 25px;
+    height: 25px;
+    background-color: #4CAF50;
+}
+
+.ourFather {
+    width: 40px;
+    height: 40px;
+    background-color: #2E8B57;
+}
+
+.cross {
+    position: absolute;
+    width: 40px;
+    height: 100px;
+    background-color: #8B0000;
+    border-radius: 5px;
+}
+
+.cross::after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    background-color: #8B0000;
+    top: 40px;
+    left: -30px;
+    border-radius: 5px;
+}
+
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 1000;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    padding: 40px 20px 20px 20px;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+#overlayMessage {
+    font-size: 18px;
+    text-align: center;
+    line-height: 1.5;
+    white-space: pre-line;
+    max-width: 90%;
+}
+
+#backButton {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    font-size: 22px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+#backButton:hover {
+    background-color: #45a049;
+}
+</style>
+</head>
+<body>
+
+<div class="rosary" id="rosary"></div>
+<div class="cross" id="cross"></div>
+
+<div id="overlay">
+    <button id="backButton">Back</button>
+    <div id="overlayMessage"></div>
+</div>
+
+<script>
+const rosary = document.getElementById("rosary");
+const overlay = document.getElementById("overlay");
+const overlayMessage = document.getElementById("overlayMessage");
+const backButton = document.getElementById("backButton");
+
+// --- PRAYERS ---
+const apostlesCreed = `I believe in God, the Father almighty, Creator of heaven and earth.\n
+And in Jesus Christ, His only Son, our Lord;\n
+Who was conceived by the Holy Spirit, born of the Virgin Mary;\n
+Suffered under Pontius Pilate, was crucified, died, and was buried;\n
+He descended into hell; the third day He rose again from the dead;\n
+He ascended into heaven, and sitteth at the right hand of God the Father almighty;\n
+From thence He shall come to judge the living and the dead.\n
+I believe in the Holy Spirit;\n
+The holy Catholic Church; the communion of saints;\n
+The forgiveness of sins;\n
+The resurrection of the body;\n
+And life everlasting. Amen.`;
+
+const ourFather = `Our Father, who art in heaven, hallowed be thy Name...\n
+Thy kingdom come; Thy will be done on earth as it is in heaven...\n
+Give us this day our daily bread...\n
+And forgive us our trespasses...\n
+As we forgive those who trespass against us...\n
+And lead us not into temptation...\n
+But deliver us from evil. Amen.`;
+
+const hailMary = `Hail Mary, full of grace, the Lord is with thee...\n
+Blessed art thou among women,\n
+And blessed is the fruit of thy womb, Jesus.\n
+Holy Mary, Mother of God,\n
+Pray for us sinners,\n
+Now and at the hour of our death. Amen.`;
+
+const gloryBe = `Glory be to the Father, and to the Son, and to the Holy Spirit...\n
+As it was in the beginning, is now, and ever shall be, world without end. Amen.`;
+
+// --- MAIN CIRCLE ---
+const decades = 5;
+const beadsPerDecade = 11;
+const totalLoopBeads = decades * beadsPerDecade;
+const loopRadiusX = 150;
+const loopRadiusY = 200;
+const centerX = 200;
+const centerY = 200;
+const rotationOffset = Math.PI / 2;
+
+for (let i = 0; i < totalLoopBeads; i++) {
+    const angle = -i * (2 * Math.PI / totalLoopBeads) + rotationOffset;
+    const x = centerX + loopRadiusX * Math.cos(angle);
+    const y = centerY + loopRadiusY * Math.sin(angle);
+
+    const bead = document.createElement("button");
+
+    if (i % beadsPerDecade === 0) {
+        bead.classList.add("ourFather");
+        bead.style.left = (x - 20) + "px";
+        bead.style.top = (y - 20) + "px";
+        bead.onclick = () => {
+            overlayMessage.textContent = ourFather;
+            overlay.style.display = "flex";
+        };
+    } else {
+        bead.classList.add("regularBead");
+        bead.style.left = (x - 12.5) + "px";
+        bead.style.top = (y - 12.5) + "px";
+        bead.onclick = () => {
+            overlayMessage.textContent = hailMary;
+            overlay.style.display = "flex";
+        };
+    }
+
+    rosary.appendChild(bead);
+}
+
+// --- TAIL BEADS (flipped top → Glory Be, bottom → small) ---
+const tailPrayers = [gloryBe, hailMary, hailMary, hailMary, ourFather];
+const tailX = 188;
+const tailStartY = 410;
+const tailSpacing = 35;
+
+for (let i = 0; i < tailPrayers.length; i++) {
+    const bead = document.createElement("button");
+
+    // Only the bottom bead is small now
+    if (i === tailPrayers.length - 1) {
+        bead.classList.add("regularBead"); // normal small size
+        bead.style.left = tailX + "px";
+        bead.style.top = tailStartY + i * tailSpacing + "px";
+    } else if (i === 0) {
+        bead.classList.add("regularBead"); // top Glory Be
+        bead.style.left = tailX + "px";
+        bead.style.top = tailStartY + i * tailSpacing + "px";
+    } else {
+        bead.classList.add("regularBead");
+        bead.style.left = tailX + "px";
+        bead.style.top = tailStartY + i * tailSpacing + "px";
+    }
+
+    bead.onclick = () => {
+        overlayMessage.textContent = tailPrayers[i];
+        overlay.style.display = "flex";
+    };
+
+    rosary.appendChild(bead);
+}
+
+// --- CROSS ---
+const cross = document.getElementById("cross");
+cross.style.left = (tailX + 548) + "px";
+cross.style.top = (tailStartY + tailPrayers.length * tailSpacing + 30) + "px";
+cross.onclick = () => {
+    overlayMessage.textContent = apostlesCreed;
+    overlay.style.display = "flex";
+};
+
+// --- BACK BUTTON ---
+backButton.onclick = () => {
+    overlay.style.display = "none";
+};
+</script>
+
+</body>
+</html>
